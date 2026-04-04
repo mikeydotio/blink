@@ -899,12 +899,14 @@ static NSString * _sanitizeTextForClipboard(NSString *text) {
     fontFamily = [self _detectFontFamilyFromContent:content] ?: font.name;
   }
   
+  [script addObject:term_setUnicodeVersion([BLKDefaults unicodeVersion])];
+
   [script addObject:@"function applyUserSettings() {"];
   {
     if (fontFamily) {
       [script addObject: term_setFontFamily(fontFamily, font.systemWide ? @"dom" : @"canvas")];
     }
-    
+
     [script addObject:term_setBoldEnabled(params.enableBold)];
     [script addObject:term_setBoldAsBright(params.boldAsBright)];
     

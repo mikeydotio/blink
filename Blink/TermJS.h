@@ -188,5 +188,8 @@ NSString *term_restore(void) {
   return @"term_restore();";
 }
 
+NSString *term_setUnicodeVersion(NSUInteger version) {
+  return [NSString stringWithFormat:@"window.__blinkUnicodeVersion = %lu;", (unsigned long)version];
+}
 
 #endif /* TermJS_h */

@@ -101,6 +101,9 @@ NSString *const BKAppearanceChanged = @"BKAppearanceChanged";
   _dontUseBlinkSnippetsIndex = [coder decodeBoolForKey:@"dontUseBlinkSnippetsIndex"];
   _snippetsDefaultLocation = [coder decodeIntegerForKey:@"snippetsDefaultLocation"];
   _scratchLanguageMode = [coder decodeObjectOfClass:[NSString class] forKey:@"scratchLanguageMode"];
+  if ([coder containsValueForKey:@"unicodeVersion"]) {
+    _unicodeVersion = [coder decodeIntegerForKey:@"unicodeVersion"];
+  }
 
   return self;
 }
@@ -133,6 +136,7 @@ NSString *const BKAppearanceChanged = @"BKAppearanceChanged";
   [encoder encodeBool:_dontUseBlinkSnippetsIndex forKey:@"dontUseBlinkSnippetsIndex"];
   [encoder encodeInteger:_snippetsDefaultLocation forKey:@"snippetsDefaultLocation"];
   [encoder encodeObject:_scratchLanguageMode forKey:@"scratchLanguageMode"];
+  [encoder encodeInteger:_unicodeVersion forKey:@"unicodeVersion"];
 
 }
 
@@ -240,6 +244,9 @@ NSString *const BKAppearanceChanged = @"BKAppearanceChanged";
 
   if(!defaults.globalSSHConfig) {
     [BLKDefaults saveGlobalSSHConfig];
+  }
+  if (!defaults.unicodeVersion) {
+    defaults.unicodeVersion = 9;
   }
 }
 
@@ -472,6 +479,13 @@ NSString *const BKAppearanceChanged = @"BKAppearanceChanged";
   return defaults.scratchLanguageMode ?: @"shell";
 }
 
++ (void)setUnicodeVersion:(NSUInteger)version {
+  defaults.unicodeVersion = version;
+}
+
++ (NSUInteger)unicodeVersion {
+  return defaults.unicodeVersion;
+}
 
 + (void)applyExternalScreenCompensation:(BKOverscanCompensation)value {
   if (UIScreen.screens.count <= 1) {

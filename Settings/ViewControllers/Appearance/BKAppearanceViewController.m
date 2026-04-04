@@ -51,6 +51,7 @@
 #define OVERSCAN_COMPENSATION_TAG 2009
 #define KEYBOARDSTYLE_TAG 2010
 #define KEYCASTS_TAG 2011
+#define UNICODE_VERSION_TAG 2012
 
 typedef NS_ENUM(NSInteger, BKAppearanceSections) {
   BKAppearance_Terminal = 0,
@@ -103,6 +104,9 @@ typedef NS_ENUM(NSInteger, BKAppearanceSections) {
   
   UISegmentedControl *_keyboardStyleSegmentedControl;
   BKKeyboardStyle _keyboardStyleValue;
+
+  UISegmentedControl *_unicodeVersionSegmentedControl;
+  NSUInteger _unicodeVersionValue;
 }
 
 - (void)viewDidLoad
@@ -153,6 +157,7 @@ typedef NS_ENUM(NSInteger, BKAppearanceSections) {
   _overscanCompensationValue = BLKDefaults.overscanCompensation;
   _keyboardStyleValue = BLKDefaults.keyboardStyle;
   _keyCastsValue = [BLKDefaults isKeyCastsOn];
+  _unicodeVersionValue = [BLKDefaults unicodeVersion];
 }
 
 - (void)saveDefaultValues
@@ -177,6 +182,7 @@ typedef NS_ENUM(NSInteger, BKAppearanceSections) {
   [BLKDefaults setOversanCompensation:_overscanCompensationValue];
   [BLKDefaults setKeyboardStyle:_keyboardStyleValue];
   [BLKDefaults setKeycasts:_keyCastsValue];
+  [BLKDefaults setUnicodeVersion:_unicodeVersionValue];
 
   [BLKDefaults saveDefaults];
   [[NSNotificationCenter defaultCenter]
@@ -206,7 +212,7 @@ typedef NS_ENUM(NSInteger, BKAppearanceSections) {
   } else if (section == BKAppearance_Layout) {
     return 2;
   } else if (section == BKAppearance_FontSize) {
-    return 5;
+    return 6;
   } else {
     return 4;
   }
@@ -265,8 +271,10 @@ typedef NS_ENUM(NSInteger, BKAppearanceSections) {
       cellIdentifier = @"enableBoldCell";
     } else if (indexPath.row == 3) {
       cellIdentifier = @"boldAsBrightCell";
-    } else {
+    } else if (indexPath.row == 4) {
       cellIdentifier = @"cursorBlinkCell";
+    } else {
+      cellIdentifier = @"unicodeVersionCell";
     }
   } else if (section == BKAppearance_KeyboardAppearance) {
     if (indexPath.row == 0) {
@@ -366,6 +374,9 @@ typedef NS_ENUM(NSInteger, BKAppearanceSections) {
   } else if (indexPath.section == BKAppearance_FontSize && indexPath.row == 4) {
     _cursorBlinkSwitch = [cell viewWithTag:CURSOR_BLINK_TAG];
     _cursorBlinkSwitch.on = _cursorBlinkValue;
+  } else if (indexPath.section == BKAppearance_FontSize && indexPath.row == 5) {
+    _unicodeVersionSegmentedControl = [cell viewWithTag:UNICODE_VERSION_TAG];
+    _unicodeVersionSegmentedControl.selectedSegmentIndex = [self _unicodeVersionToIndex:_unicodeVersionValue];
   } else if (indexPath.section == BKAppearance_KeyboardAppearance && indexPath.row == 0) {
     _keyboardStyleSegmentedControl = [cell viewWithTag:KEYBOARDSTYLE_TAG];
     _keyboardStyleSegmentedControl.selectedSegmentIndex = [self _keyboardStyleToIndex: _keyboardStyleValue];
@@ -631,6 +642,21 @@ typedef NS_ENUM(NSInteger, BKAppearanceSections) {
 - (IBAction)keycastsSwitchChanged:(id)sender
 {
   _keyCastsValue = _keyCastsSwitch.on;
+}
+
+- (IBAction)unicodeVersionChanged:(UISegmentedControl *)sender
+{
+  _unicodeVersionValue = [self _unicodeVersionFromIndex:sender.selectedSegmentIndex];
+}
+
+- (NSInteger)_unicodeVersionToIndex:(NSUInteger)version {
+  if (version <= 8) return 0;
+  return 1;
+}
+
+- (NSUInteger)_unicodeVersionFromIndex:(NSInteger)index {
+  if (index == 0) return 8;
+  return 9;
 }
 
 #pragma mark - TermViewDeviceProtocol

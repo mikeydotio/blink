@@ -81,6 +81,10 @@ hterm.VT.prototype.setDECMode = function(code, state) {
 (function() {
   'use strict';
 
+  if (typeof window.__blinkUnicodeVersion !== 'undefined' && window.__blinkUnicodeVersion < 9) {
+    return; // Legacy mode: skip emoji width fix
+  }
+
   if (typeof Intl === 'undefined' || typeof Intl.Segmenter !== 'function') {
     return; // Fall back to original behavior on old platforms
   }
