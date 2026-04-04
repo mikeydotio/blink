@@ -57,3 +57,5 @@ Resources/Fonts/Pragmata*
 .swiftpm
 
 Blink.xcodeproj/project.xcworkspace/xcshareddata
+
+# .storyhook/ is version-controlled project data — do not ignore
